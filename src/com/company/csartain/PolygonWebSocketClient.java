@@ -14,7 +14,7 @@ public class PolygonWebSocketClient extends WebSocketClient {
 
     @Override
     public void onMessage(String message) {
-        // do aggregation
+        Aggregator.getInstance().processTrade(message);
     }
 
     @Override

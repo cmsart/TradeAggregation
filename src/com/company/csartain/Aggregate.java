@@ -16,22 +16,18 @@ public class Aggregate {
     private boolean updatedAfterPeriod = false;
 
     /**
-     * Aggregates are always initialized as a result of a trade being received from the API, so the initial trade
-     * data will be used to set the starting Aggregate data
-     * @param ticker - Ticker symbol of the asset pair for the trade
-     * @param tradePrice - Price of the trade used to initialize the Aggregate
-     * @param tradeVolume - Volume of the trade used to initialize the Aggregate
-     * @param tradeTimestamp - Timestamp of the trade used to initialize the Aggregate
+     * @param ticker - Ticker symbol of the asset pair being aggregated
+     * @param aggregateStartTimestamp - Timestamp of the start of the aggregate period
      */
-    public Aggregate(String ticker, double tradePrice, double tradeVolume, long tradeTimestamp) {
+    public Aggregate(String ticker, long aggregateStartTimestamp) {
         this.ticker = ticker;
-        open = tradePrice;
-        close = tradePrice;
-        high = tradePrice;
-        low = tradePrice;
-        volume = tradeVolume;
-        aggregateStartTimestamp = tradeTimestamp;
-        latestTradeTimestamp = tradeTimestamp;
+        this.aggregateStartTimestamp = aggregateStartTimestamp;
+        open = 0;
+        close = 0;
+        high = Double.MAX_VALUE;
+        low = 0;
+        volume = 0;
+        latestTradeTimestamp = 0;
     }
 
     /**
@@ -60,6 +56,11 @@ public class Aggregate {
     public String toString() {
         Format dateFormat = new SimpleDateFormat("HH.mm.ss");
         String dateFromMillis = dateFormat.format(new Date(aggregateStartTimestamp));
+
+        if (open == 0 && close == 0) {
+            return ticker + " - " + dateFromMillis + " - No Data";
+        }
+
         String updatedText = updatedAfterPeriod ? " (Updated)" : "";
         return ticker + " - " + dateFromMillis + updatedText +
                 " - open: $" + open +
