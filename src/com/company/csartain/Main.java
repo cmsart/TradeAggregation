@@ -19,6 +19,7 @@ public class Main {
 
         // Initialize aggregator and create first aggregate
         Aggregator.getInstance().createNewAggregate(BITCOIN_TICKER, System.currentTimeMillis());
+        System.out.println("Collecting trade data...");
 
         // Task to print the most recent aggregate, and any that received out-of-order trades
         TimerTask printAggregatesTask = new TimerTask() {

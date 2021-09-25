@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class Aggregate {
     private final String ticker;
-    private final double open;
+    private double open;
     private double close;
     private double high;
     private double low;
@@ -24,8 +24,8 @@ public class Aggregate {
         this.aggregateStartTimestamp = aggregateStartTimestamp;
         open = 0;
         close = 0;
-        high = Double.MAX_VALUE;
-        low = 0;
+        high = 0;
+        low = Double.MAX_VALUE;
         volume = 0;
         latestTradeTimestamp = 0;
     }
@@ -43,6 +43,10 @@ public class Aggregate {
             low = tradePrice;
         }
 
+        if (open == 0) {
+            open = tradePrice;
+        }
+
         if (tradeTimestamp > latestTradeTimestamp) {
             latestTradeTimestamp = tradeTimestamp;
             close = tradePrice;
@@ -52,9 +56,13 @@ public class Aggregate {
         updatedAfterPeriod = afterPeriod;
     }
 
+    public long getAggregateStartTimestamp() {
+        return aggregateStartTimestamp;
+    }
+
     @Override
     public String toString() {
-        Format dateFormat = new SimpleDateFormat("HH.mm.ss");
+        Format dateFormat = new SimpleDateFormat("HH:mm:ss");
         String dateFromMillis = dateFormat.format(new Date(aggregateStartTimestamp));
 
         if (open == 0 && close == 0) {
