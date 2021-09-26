@@ -8,8 +8,8 @@ import java.util.*;
 
 public class Aggregator {
     private static Aggregator INSTANCE;
-    private final List<Aggregate> aggregates = Collections.synchronizedList(new ArrayList<>());
-    private final Set<Integer> aggregateIndiciesToPrint = Collections.synchronizedSet(new HashSet<>());
+    private final List<Aggregate> aggregates;
+    private final Set<Integer> aggregateIndicesToPrint = Collections.synchronizedSet(new HashSet<>());
     private volatile long earliestAggregateStartTimestamp = 0;
 
     private static final String PRICE_KEY = "p";
@@ -20,8 +20,13 @@ public class Aggregator {
     private static final long ONE_HOUR_MILLIS = 3600000;
     private static final long THIRTY_SECONDS_MILLIS = 30000;
 
+    // For testing only
+    Aggregator(List<Aggregate> aggregates) {
+        this.aggregates = aggregates;
+    }
+
     private Aggregator() {
-        // singleton
+        this(Collections.synchronizedList(new ArrayList<>()));
     }
 
     public static Aggregator getInstance() {
@@ -50,24 +55,25 @@ public class Aggregator {
                 boolean isOutOfOrder = indexToUpdate != aggregates.size() - 1;
                 if (isOutOfOrder) {
                     // Updated past aggregates will need to be printed again
-                    aggregateIndiciesToPrint.add(indexToUpdate);
+                    aggregateIndicesToPrint.add(indexToUpdate);
                 }
 
                 aggregates.get(indexToUpdate).updateAggregate(price, volume, timestamp, isOutOfOrder);
             }
         } catch (JSONException e) {
             System.out.println("Unable to parse trade JSON with exception= " + e.getMessage() + ", JSON=" + tradeJson);
+            throw e;
         }
     }
 
     public void createNewAggregate(String ticker, long startTimeMillis) {
         aggregates.add(new Aggregate(ticker, startTimeMillis));
-        aggregateIndiciesToPrint.clear();
-        aggregateIndiciesToPrint.add(aggregates.size() - 1);
+        aggregateIndicesToPrint.clear();
+        aggregateIndicesToPrint.add(aggregates.size() - 1);
 
         if (earliestAggregateStartTimestamp == 0) {
             earliestAggregateStartTimestamp = startTimeMillis;
-        } else if (startTimeMillis >= (startTimeMillis + ONE_HOUR_MILLIS)) {
+        } else if (startTimeMillis >= (earliestAggregateStartTimestamp + ONE_HOUR_MILLIS)) {
             // We don't need any aggregates more than one hour old
             // Increase the earliest timestamp and remove the expired aggregate
             earliestAggregateStartTimestamp = aggregates.get(1).getAggregateStartTimestamp();
@@ -76,8 +82,24 @@ public class Aggregator {
     }
 
     public void printAggregates() {
-        for (Integer index : aggregateIndiciesToPrint) {
+        for (Integer index : aggregateIndicesToPrint) {
             System.out.println(aggregates.get(index));
         }
+    }
+
+    public List<Aggregate> getAggregates() {
+        return aggregates;
+    }
+
+    public Set<Integer> getAggregateIndicesToPrint() {
+        return aggregateIndicesToPrint;
+    }
+
+    public long getEarliestAggregateStartTimestamp() {
+        return earliestAggregateStartTimestamp;
+    }
+
+    void setEarliestAggregateStartTimestamp(long earliestAggregateStartTimestamp) {
+        this.earliestAggregateStartTimestamp = earliestAggregateStartTimestamp;
     }
 }
