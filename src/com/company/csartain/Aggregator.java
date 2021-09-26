@@ -18,6 +18,7 @@ public class Aggregator {
     private static final String TYPE_KEY = "ev";
     private static final String TRADE_TYPE_VALUE = "XT";
     private static final long ONE_HOUR_MILLIS = 3600000;
+    private static final long THIRTY_SECONDS_MILLIS = 30000;
 
     private Aggregator() {
         // singleton
@@ -45,7 +46,7 @@ public class Aggregator {
                 long timestamp = trade.getLong(TIMESTAMP_KEY);
 
                 // Determine which aggregate to update, since they may be out or order
-                int indexToUpdate = (int) (((double)(timestamp - earliestAggregateStartTimestamp)) / 30000);
+                int indexToUpdate = (int) (((double)(timestamp - earliestAggregateStartTimestamp)) / THIRTY_SECONDS_MILLIS);
                 boolean isOutOfOrder = indexToUpdate != aggregates.size() - 1;
                 if (isOutOfOrder) {
                     // Updated past aggregates will need to be printed again

@@ -43,7 +43,7 @@ public class PolygonWebSocketClient extends WebSocketClient {
     public void subscribe(String ticker) {
         JSONObject subscribeRequest = new JSONObject();
         subscribeRequest.put("action", "subscribe");
-        subscribeRequest.put("params", ticker);
+        subscribeRequest.put("params", "XT." + ticker);
         String message = subscribeRequest.toString();
         this.send(message);
     }

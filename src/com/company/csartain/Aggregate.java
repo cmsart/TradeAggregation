@@ -1,5 +1,6 @@
 package com.company.csartain;
 
+import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -69,12 +70,14 @@ public class Aggregate {
             return ticker + " - " + dateFromMillis + " - No Data";
         }
 
+        DecimalFormat two = new DecimalFormat("#.00");
+        DecimalFormat nine = new DecimalFormat("#.000000000");
         String updatedText = updatedAfterPeriod ? " (Updated)" : "";
-        return ticker + " - " + dateFromMillis + updatedText +
-                " - open: $" + open +
-                ", close: $" + close +
-                ", high: $" + high +
-                ", low: $" + low +
-                ", volume: " + volume;
+        return dateFromMillis + " - " + ticker + updatedText +
+                " - open: $" + two.format(open) +
+                ", close: $" + two.format(close) +
+                ", high: $" + two.format(high) +
+                ", low: $" + two.format(low) +
+                ", volume: " + nine.format(volume);
     }
 }

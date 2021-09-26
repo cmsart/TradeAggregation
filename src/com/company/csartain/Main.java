@@ -6,7 +6,7 @@ import java.util.TimerTask;
 
 public class Main {
     private static final String CRYPTO_ENDPOINT = "wss://socket.polygon.io/crypto";
-    private static final String BITCOIN_TICKER = "XT.BTC-USD";
+    private static final String BITCOIN_TICKER = "BTC-USD";
     private static final int THIRTY_SECONDS_IN_MILLIS = 30000;
 
 
