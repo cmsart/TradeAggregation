@@ -16,9 +16,6 @@ public class Main {
         // API key passed in via command line args
         client.authenticate(args[0]);
         client.subscribe(BITCOIN_TICKER);
-
-        // Initialize aggregator and create first aggregate
-        Aggregator.getInstance().createNewAggregate(BITCOIN_TICKER, System.currentTimeMillis());
         System.out.println("Collecting trade data...");
 
         // Task to print the most recent aggregate, and any that received out-of-order trades
@@ -32,6 +29,6 @@ public class Main {
         };
 
         // Wait 30 seconds, then execute task and repeat every 30 seconds
-        new Timer().schedule(printAggregatesTask, THIRTY_SECONDS_IN_MILLIS, THIRTY_SECONDS_IN_MILLIS);
+        new Timer().schedule(printAggregatesTask, 0, THIRTY_SECONDS_IN_MILLIS);
     }
 }
