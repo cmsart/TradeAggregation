@@ -28,7 +28,7 @@ public class Main {
             }
         };
 
-        // Wait 30 seconds, then execute task and repeat every 30 seconds
+        // Repeat task every 30 seconds
         new Timer().schedule(printAggregatesTask, 0, THIRTY_SECONDS_IN_MILLIS);
     }
 }
